@@ -45,8 +45,10 @@ void TestRangeWithRtree(string datafile) {
 		MyPoint point(original_dataset[i][0], original_dataset[i][1]);
 		rtree.insert(point);
 	}
-
+	cout << "finsih inserting data to Rtree" << endl;
+	
 	// query dataset
+
 	CalculateRangeR(rtree, "C:/Users/Cloud/Desktop/LearnIndex/data/RangeQueryCollection100m.csv");
 	CalculateRangeR(rtree, "C:/Users/Cloud/Desktop/LearnIndex/data/RangeQueryCollection200m.csv");
 	CalculateRangeR(rtree, "C:/Users/Cloud/Desktop/LearnIndex/data/RangeQueryCollection500m.csv");
@@ -55,6 +57,11 @@ void TestRangeWithRtree(string datafile) {
 	CalculateRangeR(rtree, "C:/Users/Cloud/Desktop/LearnIndex/data/RangeQueryCollection2km.csv");
 	CalculateRangeR(rtree, "C:/Users/Cloud/Desktop/LearnIndex/data/RangeQueryCollection5km.csv");
 	CalculateRangeR(rtree, "C:/Users/Cloud/Desktop/LearnIndex/data/RangeQueryCollection10km.csv");
+
+	CalculateRangeR(rtree, "C:/Users/Cloud/Desktop/LearnIndex/data/RangeQueryCollection20km.csv");
+	CalculateRangeR(rtree, "C:/Users/Cloud/Desktop/LearnIndex/data/RangeQueryCollection50km.csv");
+	CalculateRangeR(rtree, "C:/Users/Cloud/Desktop/LearnIndex/data/RangeQueryCollection100km.csv");
+
 }
 
 void inline CalculateRangeR(bgi::rtree<MyPoint, bgi::linear<16>>& rtree, string testfile) {
@@ -87,18 +94,18 @@ void TestRangeWithStx(unsigned max_bits, string datafile) {
 	stx::btree<long, vector<double>> btree;
 	btree.bulk_load(dataset.begin(), dataset.end());
 
-	CalculateRange(btree, 14, "C:/Users/Cloud/Desktop/LearnIndex/data/RangeQueryCollection100m.csv");
-	CalculateRange(btree, 14, "C:/Users/Cloud/Desktop/LearnIndex/data/RangeQueryCollection200m.csv");
-	CalculateRange(btree, 14, "C:/Users/Cloud/Desktop/LearnIndex/data/RangeQueryCollection500m.csv");
+	//CalculateRange(btree, 14, "C:/Users/Cloud/Desktop/LearnIndex/data/RangeQueryCollection100m.csv");
+	//CalculateRange(btree, 14, "C:/Users/Cloud/Desktop/LearnIndex/data/RangeQueryCollection200m.csv");
+	//CalculateRange(btree, 14, "C:/Users/Cloud/Desktop/LearnIndex/data/RangeQueryCollection500m.csv");
 
-	CalculateRange(btree, 14); // 1km
+	//CalculateRange(btree, 14, "C:/Users/Cloud/Desktop/LearnIndex/data/RangeQueryCollection1km.csv"); // 1km
+	//CalculateRange(btree, 14, "C:/Users/Cloud/Desktop/LearnIndex/data/RangeQueryCollection2km.csv");
+	//CalculateRange(btree, 14, "C:/Users/Cloud/Desktop/LearnIndex/data/RangeQueryCollection5km.csv");
+	//CalculateRange(btree, 14, "C:/Users/Cloud/Desktop/LearnIndex/data/RangeQueryCollection10km.csv");
 
-	CalculateRange(btree, 14, "C:/Users/Cloud/Desktop/LearnIndex/data/RangeQueryCollection2km.csv");
-	CalculateRange(btree, 14, "C:/Users/Cloud/Desktop/LearnIndex/data/RangeQueryCollection5km.csv");
-	CalculateRange(btree, 14, "C:/Users/Cloud/Desktop/LearnIndex/data/RangeQueryCollection10km.csv");
-	/*CalculateRange(btree, 14, "C:/Users/Cloud/Desktop/LearnIndex/data/RangeQueryCollection20km.csv");
-	CalculateRange(btree, 14, "C:/Users/Cloud/Desktop/LearnIndex/data/RangeQueryCollection50km.csv");
-	CalculateRange(btree, 14, "C:/Users/Cloud/Desktop/LearnIndex/data/RangeQueryCollection100km.csv");*/
+	CalculateRange(btree, 14, "C:/Users/Cloud/Desktop/LearnIndex/data/RangeQueryCollection20km.csv");
+	//CalculateRange(btree, 14, "C:/Users/Cloud/Desktop/LearnIndex/data/RangeQueryCollection50km.csv");
+	//CalculateRange(btree, 14, "C:/Users/Cloud/Desktop/LearnIndex/data/RangeQueryCollection100km.csv");
 }
 
 
