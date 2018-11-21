@@ -27,7 +27,7 @@
     <ClInclude Include="TestRange.h">
       <Filter>源文件</Filter>
     </ClInclude>
-    <ClInclude Include="Trash.h">
+    <ClInclude Include="TestPoint.h">
       <Filter>源文件</Filter>
     </ClInclude>
   </ItemGroup>

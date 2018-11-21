@@ -16,6 +16,8 @@
 #include <iomanip>
 #include <stx/btree.h>
 
+#include <chrono>
+
 #include "HilbertDecomposition.h"
 
 namespace bg = boost::geometry;
@@ -67,19 +69,28 @@ void TestRangeWithRtree(string datafile) {
 void inline CalculateRangeR(bgi::rtree<MyPoint, bgi::linear<16>>& rtree, string testfile) {
 	// Load Testset
 	vector<vector<double>> testset = ReadSearchAreaFromFile(testfile);
-	clock_t total_time = 0, each_time = 0, start, stop;
+	//clock_t total_time = 0, each_time = 0, start, stop;
+	auto t0 = chrono::steady_clock::now();
+
 	std::vector<MyPoint> returned_values;
+
+	/*Box query_region(MyPoint(testset[0][0], testset[0][2]), MyPoint(testset[0][1], testset[0][3]));
+	rtree.query(bgi::intersects(query_region), std::back_inserter(returned_values));*/
+
 	for (int i = 0; i < testset.size(); i++) {
-		start = clock();
+		//start = clock();
 		returned_values.clear();
 		// query range
 		Box query_region(MyPoint(testset[i][0], testset[i][2]), MyPoint(testset[i][1], testset[i][3]));
 		rtree.query(bgi::intersects(query_region), std::back_inserter(returned_values));
-		stop = clock();
+		/*stop = clock();
 		each_time = stop - start;
-		total_time += each_time;
+		total_time += each_time;*/
 	}
-	cout << "total time: " << total_time << endl;
+
+	auto t1 = chrono::steady_clock::now();
+	//cout << "total time: " << total_time << endl;
+	cout << "Total Time in chrono: " << chrono::duration_cast<chrono::nanoseconds>(t1 - t0).count() << " ns" << endl;
 }
 
 void TestRangeWithStx(unsigned max_bits, string datafile) {
@@ -94,16 +105,16 @@ void TestRangeWithStx(unsigned max_bits, string datafile) {
 	stx::btree<long, vector<double>> btree;
 	btree.bulk_load(dataset.begin(), dataset.end());
 
-	//CalculateRange(btree, 14, "C:/Users/Cloud/Desktop/LearnIndex/data/RangeQueryCollection100m.csv");
-	//CalculateRange(btree, 14, "C:/Users/Cloud/Desktop/LearnIndex/data/RangeQueryCollection200m.csv");
-	//CalculateRange(btree, 14, "C:/Users/Cloud/Desktop/LearnIndex/data/RangeQueryCollection500m.csv");
+	CalculateRange(btree, 14, "C:/Users/Cloud/Desktop/LearnIndex/data/RangeQueryCollection100m.csv");
+	CalculateRange(btree, 14, "C:/Users/Cloud/Desktop/LearnIndex/data/RangeQueryCollection200m.csv");
+	CalculateRange(btree, 14, "C:/Users/Cloud/Desktop/LearnIndex/data/RangeQueryCollection500m.csv");
 
-	//CalculateRange(btree, 14, "C:/Users/Cloud/Desktop/LearnIndex/data/RangeQueryCollection1km.csv"); // 1km
-	//CalculateRange(btree, 14, "C:/Users/Cloud/Desktop/LearnIndex/data/RangeQueryCollection2km.csv");
-	//CalculateRange(btree, 14, "C:/Users/Cloud/Desktop/LearnIndex/data/RangeQueryCollection5km.csv");
-	//CalculateRange(btree, 14, "C:/Users/Cloud/Desktop/LearnIndex/data/RangeQueryCollection10km.csv");
+	CalculateRange(btree, 14, "C:/Users/Cloud/Desktop/LearnIndex/data/RangeQueryCollection1km.csv"); // 1km
+	CalculateRange(btree, 14, "C:/Users/Cloud/Desktop/LearnIndex/data/RangeQueryCollection2km.csv");
+	CalculateRange(btree, 14, "C:/Users/Cloud/Desktop/LearnIndex/data/RangeQueryCollection5km.csv");
+	CalculateRange(btree, 14, "C:/Users/Cloud/Desktop/LearnIndex/data/RangeQueryCollection10km.csv");
 
-	CalculateRange(btree, 14, "C:/Users/Cloud/Desktop/LearnIndex/data/RangeQueryCollection20km.csv");
+	//CalculateRange(btree, 14, "C:/Users/Cloud/Desktop/LearnIndex/data/RangeQueryCollection20km.csv");
 	//CalculateRange(btree, 14, "C:/Users/Cloud/Desktop/LearnIndex/data/RangeQueryCollection50km.csv");
 	//CalculateRange(btree, 14, "C:/Users/Cloud/Desktop/LearnIndex/data/RangeQueryCollection100km.csv");
 }
@@ -120,6 +131,19 @@ void inline CalculateRange(stx::btree<long, vector<double>>& btree, unsigned max
 	int FULL_BITS = 22;
 	int differ_bits = FULL_BITS - max_bits;
 	clock_t total_time = 0, each_time = 0;
+	auto t0 = chrono::steady_clock::now();
+
+	//int lower_x = (int)((2 * testset[0][0] + 180) * 10000) >> differ_bits;
+	//int upper_x = (int)((2 * testset[0][1] + 180) * 10000) >> differ_bits;
+	//int lower_y = (int)((testset[0][2] + 180) * 10000) >> differ_bits;
+	//int upper_y = (int)((testset[0][3] + 180) * 10000) >> differ_bits;
+
+	//// decompost the range into Hilbert interval
+	//// unsigned max_bits, unsigned lower_x, unsigned upper_x, unsigned lower_y, unsigned upper_y
+	//vector<interval> intervals = GetIntervals(max_bits, lower_x, upper_x, lower_y, upper_y);
+	//RetrieveItems(intervals, btree, each_time);
+	//cout << "intervals size: " << intervals.size() << endl;
+
 	for (int i = 0; i < testset.size(); i++) {
 		// map the original latitude and longitude to integer
 		int lower_x = (int)((2 * testset[i][0] + 180) * 10000) >> differ_bits;
@@ -131,9 +155,14 @@ void inline CalculateRange(stx::btree<long, vector<double>>& btree, unsigned max
 		// unsigned max_bits, unsigned lower_x, unsigned upper_x, unsigned lower_y, unsigned upper_y
 		vector<interval> intervals = GetIntervals(max_bits, lower_x, upper_x, lower_y, upper_y);
 		RetrieveItems(intervals, btree, each_time);
-		total_time += each_time;
+		//total_time += each_time;
+		//cout << "intervals size: " << intervals.size() << endl;
 	}
-	cout << "Total Time(ms): " << total_time << endl;
+
+	auto t1 = chrono::steady_clock::now();
+
+	//cout << "Total Time(ms): " << total_time << endl;
+	cout << "Total Time in chrono: " << chrono::duration_cast<chrono::nanoseconds>(t1 - t0).count() << " ns" << endl;
 }
 
 //void inline CalculateRange(double lx, double ux, double ly, double uy, unsigned max_bits) {
@@ -153,8 +182,8 @@ void inline CalculateRange(stx::btree<long, vector<double>>& btree, unsigned max
 //}
 
 void inline RetrieveItems(vector<interval>& intervals, stx::btree<long, vector<double>>& btree, clock_t& time_spent) {
-	clock_t start, stop;
-	start = clock();
+	//clock_t start, stop;
+	//start = clock();
 	vector<vector<double>> results;
 	stx::btree<long, vector<double>>::iterator iter;
 	int count = 0;
@@ -162,14 +191,14 @@ void inline RetrieveItems(vector<interval>& intervals, stx::btree<long, vector<d
 		iter = btree.lower_bound(intervals[i].lower_hilbert_value);
 		if (iter != btree.end()) {
 			while (iter->first <= intervals[i].upper_hilbert_value) {
-				results.push_back(iter->second); // consider should I comment it
+				//results.push_back(iter->second); // consider should I comment it
 				count++;
 				iter++;
 			}
 		}
 	}
-	stop = clock();
-	time_spent = stop - start;
+	//stop = clock();
+	//time_spent = stop - start;
 	cout << "count: " << count << "  ";
 }
 
